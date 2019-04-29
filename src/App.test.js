@@ -4,7 +4,7 @@ import App from './App';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
-it('renders without crashing', () => {
+it('renders without crashing', (done) => {
   const div = document.createElement('div');
   ReactDOM.render(
     <Provider store={store}>
@@ -13,4 +13,5 @@ it('renders without crashing', () => {
     div
   );
   ReactDOM.unmountComponentAtNode(div);
+  done();
 });
