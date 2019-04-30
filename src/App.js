@@ -1,9 +1,17 @@
-import React from 'react';
-import './App.css';
-import DisplayData from './Components/DisplayData';
+import React, { Component } from 'react';
 
-function App() {
-  return <DisplayData />;
+import AddCompany from './Components/AddCompany';
+import CompanyList from './Components/CompanyList';
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <AddCompany />
+        <CompanyList />
+      </div>
+    );
+  }
 }
 
 export default App;
