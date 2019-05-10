@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase';
+import {
+  firebaseConnect,
+  withFirebase,
+  isLoaded,
+  isEmpty,
+  withFirestore
+} from 'react-redux-firebase';
 import { Button, Icon, Message } from 'semantic-ui-react';
 
 import {
@@ -53,21 +59,24 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleLogIn = e => {
-    const INITIAL_STATE = {
-      loginEmail: '',
-      loginPassword: '',
-      error: null
-    };
+  handleLogIn = async e => {
     e.preventDefault();
-    this.props.firebase
-      .login({
+    try {
+      let user = await this.props.firebase.login({
         email: this.state.loginEmail,
         password: this.state.loginPassword
-      })
-      .catch(error => {
-        this.setState({ ...INITIAL_STATE, error });
       });
+      if (user) {
+        this.getUserId(user);
+      }
+    } catch (error) {
+      const INITIAL_STATE = {
+        loginEmail: '',
+        loginPassword: '',
+        error: null
+      };
+      this.setState({ ...INITIAL_STATE, error });
+    }
   };
 
   togglePassword = () => {
@@ -120,7 +129,10 @@ class Login extends Component {
                 onClick={this.togglePassword}
               />
             </StyledLabel>
-            <ForgotPasswordDiv onClick={() => this.props.history.push('/forgotPassword')}>Forgot Password?</ForgotPasswordDiv>
+            <ForgotPasswordDiv
+              onClick={() => this.props.history.push('/forgotPassword')}>
+              Forgot Password?
+            </ForgotPasswordDiv>
             <StyledLowerSignIn>
               <StyledLink to='/register'> Don't have an account? </StyledLink>
               <StyledButton disabled={isInvalid} onClick={this.handleLogIn}>
@@ -141,15 +153,31 @@ class Login extends Component {
                 provider: 'google',
                 type: 'popup'
               })
-            }
-          >
+            }>
             <Icon name='google plus' /> Sign in with Google
           </Button>
           <PasswordlessButton
-            onClick={() => this.props.history.push('/passwordlesssubmit')}
-          >
+            onClick={() => this.props.history.push('/passwordlesssubmit')}>
             Email Me a Link to Sign In
           </PasswordlessButton>
+          <Button
+            onClick={() =>
+              this.props.firestore
+                .collection('users')
+                .where('userEmail', '==', 'Misael69@yahoo.com')
+                .get()
+                .then(function(doc) {
+                  if (doc.exists) {
+                    console.log('Document data:', doc.data());
+                  } else {
+                    // doc.data() will be undefined in this case
+                    console.log('No such document!');
+                    console.log(doc);
+                  }
+                })
+            }>
+            ddd
+          </Button>
         </StyledLoginCon>
         <LoginAnimation />
       </StyledLogin>
@@ -160,7 +188,8 @@ class Login extends Component {
 const mapStateToProps = state => {
   return {
     auth: state.firebase.auth,
-    profile: state.firebase.profile
+    profile: state.firebase.profile,
+    user: state.firestore.ordered.users
   };
 };
 
@@ -171,6 +200,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default compose(
+  withFirebase,
+  withFirestore,
   connect(
     mapStateToProps,
     mapDispatchToProps

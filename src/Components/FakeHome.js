@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { firebaseConnect, isEmpty, isLoaded } from 'react-redux-firebase';
+import { firebaseConnect, isEmpty, isLoaded, withFirestore } from 'react-redux-firebase';
 import NavBar from './NavBar';
 import styled from 'styled-components';
 
@@ -15,6 +15,20 @@ class FakeHome extends Component {
       this.props.history.push('/login');
     }
   }
+
+  componentDidMount() {
+	  if (!isEmpty(this.props.auth)) {
+		console.log('hello');
+		this.props.firestore.collection('users').where('userEmail', '==', this.props.auth.email).get()
+		.then(data => {
+			data.forEach(function(doc) {
+      		// doc.data() is never undefined for query doc snapshots
+      		console.log(doc);
+    	});
+		})
+	}
+  }
+
 
   render() {
     if (!isLoaded(this.props.auth)) {
@@ -76,6 +90,7 @@ const MidRightContainer = styled.div`
 `;
 
 export default compose(
+	withFirestore,
   connect(
     mapStateToProps,
     mapDispatchToProps
