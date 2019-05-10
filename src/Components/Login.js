@@ -160,24 +160,6 @@ class Login extends Component {
             onClick={() => this.props.history.push('/passwordlesssubmit')}>
             Email Me a Link to Sign In
           </PasswordlessButton>
-          <Button
-            onClick={() =>
-              this.props.firestore
-                .collection('users')
-                .where('userEmail', '==', 'Misael69@yahoo.com')
-                .get()
-                .then(function(doc) {
-                  if (doc.exists) {
-                    console.log('Document data:', doc.data());
-                  } else {
-                    // doc.data() will be undefined in this case
-                    console.log('No such document!');
-                    console.log(doc);
-                  }
-                })
-            }>
-            ddd
-          </Button>
         </StyledLoginCon>
         <LoginAnimation />
       </StyledLogin>
