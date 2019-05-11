@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { firebaseConnect, isLoaded, isEmpty, withFirestore } from 'react-redux-firebase';
 import { Button, Icon, Message } from 'semantic-ui-react';
 
@@ -20,6 +20,7 @@ import Spinner from './semantic-components/Spinner';
 import LoginAnimation from './animations/LoginAnimation';
 import { PasswordlessButton } from './styled-components/StyledButton';
 import showPassword from '../images/showPassword.svg';
+import { setActiveOrg } from '../redux/actions/actionCreators';
 
 class Login extends Component {
   static propTypes = {
@@ -59,14 +60,14 @@ class Login extends Component {
         password: this.state.loginPassword
       })
       .then(res => {
-        this.setUserIdInLocalStorage(res.user.user.email);
+        this.setUserIdInLocalStorage(res.user.user.email, this.props.setActiveOrg);
       })
       .catch(error => {
         this.setState({ ...INITIAL_STATE, error });
       });
   };
 
-  setUserIdInLocalStorage = email => {
+  setUserIdInLocalStorage = (email, setActiveOrg) => {
     var ref = this.props.firestore.collection('users').where('userEmail', '==', email);
 
     ref
@@ -77,6 +78,7 @@ class Login extends Component {
           localStorage.setItem('uuid', doc.id);
           localStorage.setItem('userData', JSON.stringify(doc.data()));
           // to parse use -> var user = JSON.parse(localStorage.getItem('userData'))
+          setActiveOrg(doc.data().arrayOfOrgsIds[0]);
         });
       })
       .catch(error => {
@@ -175,9 +177,13 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    clearFirestore: () => dispatch({ type: '@@reduxFirestore/CLEAR_DATA' })
-  };
+  return bindActionCreators(
+    {
+      clearFirestore: () => dispatch({ type: '@@reduxFirestore/CLEAR_DATA' }),
+      setActiveOrg
+    },
+    dispatch
+  );
 };
 
 export default compose(

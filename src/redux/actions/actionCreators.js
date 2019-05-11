@@ -8,6 +8,7 @@ export const showModal = modal => {
 };
 
 export const setActiveOrg = orgId => {
+  console.log('hello');
   return {
     type: types.SET_ACTIVE_ORG,
     payload: orgId

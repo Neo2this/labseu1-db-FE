@@ -4,7 +4,7 @@ import { compose, bindActionCreators } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import styled from 'styled-components';
 import { Icon, Dropdown } from 'semantic-ui-react';
-import { setActiveOrg } from '../redux/actions/actionCreators';
+import { setActiveOrg, switchSpaces, resetSpace } from '../redux/actions/actionCreators';
 
 import plusIcon from '../images/icon-plus-lightgray.svg';
 import homeIcon from '../images/icon-home-lightgray.svg';
@@ -13,6 +13,10 @@ import { NavBarOrgDropdown } from './NavBarOrgDropdown';
 const userDoc = localStorage.getItem('uuid');
 
 export class NavBar extends Component {
+  // componentDidMount() {
+  //   this.handleLogOut();
+  // }
+
   handleLogOut = async () => {
     await this.props.firebase.logout();
     this.props.clearFirestore();
@@ -23,6 +27,7 @@ export class NavBar extends Component {
     e.preventDefault();
     const { value } = data;
     this.props.setActiveOrg(value);
+    this.props.resetSpace();
   };
 
   render() {
@@ -35,6 +40,7 @@ export class NavBar extends Component {
       value: `${org.id}`
     }));
     const isOrgsLoaded = orgsFromArrayOfUsersIds.length > 0 || orgsFromArrayOfAdminsIds.length > 0;
+    const ArrayOfOrgIdsFromUsers = userDoc.ArrayOfOrgsIds;
     const userOptions = [
       {
         key: activeUser.fullName,
@@ -72,7 +78,7 @@ export class NavBar extends Component {
         <InnerContainer>
           <HomeContainer>
             <img src={homeIcon} alt="home icon" />
-            <span>Home</span>
+            <span onClick={this.props.resetSpace}>Home</span>
           </HomeContainer>
 
           <div>
@@ -80,17 +86,16 @@ export class NavBar extends Component {
               <OuterOrgContainer>
                 <OrgContainer>
                   <Icon name="building outline" size="large" />
-                  {isOrgsLoaded && (
+                  {this.props.activeOrg && (
                     <NavBarOrgDropdown
-                      setActiveOrg={this.props.setActiveOrg}
                       orgOptions={orgOptions}
                       setSelectedOrgToRedux={this.setSelectedOrgToRedux}
+                      activeOrg={this.props.activeOrg}
                     />
-                    //********************************************** */
                   )}
                 </OrgContainer>
                 <div>
-                  <img src={plusIcon} alt="plus icon" />
+                  <img src={plusIcon} alt="plus icon" onClick={() => console.log(this.props.activeOrg)} />
                 </div>
               </OuterOrgContainer>
               <SpaceContainer>
@@ -98,7 +103,7 @@ export class NavBar extends Component {
                   <div>
                     {spacesForActiveOrg.map((space, index) => (
                       <div key={index}>
-                        <span>{space.spaceName}</span>
+                        <span onClick={() => this.props.switchSpaces(space.id)}>{space.spaceName}</span>
                       </div>
                     ))}
                   </div>
@@ -126,7 +131,9 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       clearFirestore: () => dispatch({ type: '@@reduxFirestore/CLEAR_DATA' }),
-      setActiveOrg
+      setActiveOrg,
+      switchSpaces,
+      resetSpace
     },
     dispatch
   );
@@ -139,7 +146,7 @@ export default compose(
     mapDispatchToProps
   ),
   firestoreConnect(props => {
-    // if (!userDoc) return []; <-- empty array if no userDoc in local storage
+    // if (!userDoc || !props.activeOrg) return [];
     return [
       {
         collection: 'users',
@@ -147,7 +154,7 @@ export default compose(
       },
       {
         collection: 'spaces',
-        where: [['arrayOfUserIdsInSpace', 'array-contains', userDoc], ['orgId', '==', props.activeOrg]]
+        where: [['orgId', '==', props.activeOrg], ['arrayOfUserIdsInSpace', 'array-contains', userDoc]]
       },
       {
         collection: 'organisations',

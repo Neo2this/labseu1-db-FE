@@ -12,6 +12,7 @@ export function modal(state = { activeModal: null }, action) {
 export function activeOrg(state = { activeOrg: null }, action) {
   switch (action.type) {
     case types.SET_ACTIVE_ORG:
+      console.log('hi');
       return { ...state, activeOrg: action.payload };
     default:
       return state;

@@ -94,7 +94,8 @@ const mapStateToProps = state => {
     profile: state.firebase.profile,
     threads: state.firestore.ordered.threads ? state.firestore.ordered.threads : [],
     activeOrg: state.activeOrg.activeOrg,
-    activeModal: state.modal.activeModal
+    activeModal: state.modal.activeModal,
+    spaceId: state.spaceId
   };
 };
 
