@@ -19,6 +19,9 @@ import { showModal, setActiveThread } from '../redux/actions/actionCreators';
 
 //Main component
 class MainScreen extends React.Component {
+  arrayOfIdsOfUsersSpaces = this.props.usersSpaces.map(s => {
+    return s.id;
+  });
   render() {
     return (
       <StyledMainScreen>
@@ -48,30 +51,35 @@ class MainScreen extends React.Component {
         {/*Loop trough all the threads that are associated with the orgId*/}
         {/*OrgId is hardcoded -> we will need to fix this when we get id from logged in user*/}
         {this.props.threads.length > 0 &&
+          this.arrayOfIdsOfUsersSpaces &&
           this.props.threads.map((t, i) => {
-            let dateInfo = new Date(t.threadCreatedAt);
-            let date = `${dateInfo.getMonth()}/${dateInfo.getDate()} ${dateInfo.getHours()}:${(
-              '0' + dateInfo.getMinutes()
-            ).slice(-2)}`;
-            return (
-              <ThreadCard
-                key={t.id}
-                createdBy={t.threadCreatedByUserName}
-                createdAt={date}
-                spaceId={t.spaceId}
-                threadId={t.id}
-                heading={t.threadName}
-                info={t.threadTopic}
-                isFollowUpDecided={
-                  t.arrayOfUserIdsWhoFollowUp && t.arrayOfUserIdsWhoFollowUp.includes(this.props.uuid) ? true : false
-                }
-                checked={
-                  (!t.whenUserHasSeen[localStorage.getItem('uuid')] && 'false') ||
-                  (t.lastCommentCreatedAt > t.whenUserHasSeen[localStorage.getItem('uuid')] ? 'false' : 'true')
-                }
-                onClick={() => this.props.setActiveThread(t.id)}
-              />
-            );
+            if (this.arrayOfIdsOfUsersSpaces.includes(t.spaceId)) {
+              console.log(this.arrayOfIdsOfUsersSpaces);
+              console.log(t.spaceId);
+              console.log(this.arrayOfIdsOfUsersSpaces.includes(t.spaceId));
+              let dateInfo = new Date(t.threadCreatedAt);
+              let date = `${dateInfo.getMonth()}/${dateInfo.getDate()} ${dateInfo.getHours()}:${(
+                '0' + dateInfo.getMinutes()
+              ).slice(-2)}`;
+              return (
+                <ThreadCard
+                  key={t.id}
+                  createdBy={t.threadCreatedByUserName}
+                  spaceId={t.spaceId}
+                  threadId={t.id}
+                  heading={t.threadName}
+                  info={t.threadTopic}
+                  isFollowUpDecided={
+                    t.arrayOfUserIdsWhoFollowUp && t.arrayOfUserIdsWhoFollowUp.includes(this.props.uuid) ? true : false
+                  }
+                  checked={
+                    (!t.whenUserHasSeen[localStorage.getItem('uuid')] && 'false') ||
+                    (t.lastCommentCreatedAt > t.whenUserHasSeen[localStorage.getItem('uuid')] ? 'false' : 'true')
+                  }
+                  onClick={() => this.props.setActiveThread(t.id)}
+                />
+              );
+            }
           })}
       </StyledMainScreen>
     );
@@ -98,9 +106,11 @@ const mapStateToProps = state => {
     auth: state.firebase.auth,
     profile: state.firebase.profile,
     threads: state.firestore.ordered.mainScreenThreads ? state.firestore.ordered.mainScreenThreads : [],
+    spaces: state.firestore.ordered.usersSpaces ? state.firestore.ordered.usersSpaces : [],
     activeOrg: localStorage.getItem('activeOrg') ? localStorage.getItem('activeOrg') : '',
     activeModal: state.modal.activeModal,
-    uuid: localStorage.getItem('uuid') ? localStorage.getItem('uuid') : ''
+    uuid: localStorage.getItem('uuid') ? localStorage.getItem('uuid') : '',
+    usersSpaces: state.firestore.ordered.usersSpaces ? state.firestore.ordered.usersSpaces : []
   };
 };
 
@@ -120,6 +130,11 @@ export default compose(
         where: [['orgId', '==', props.activeOrg]],
         orderBy: ['threadCreatedAt', 'desc'],
         storeAs: 'mainScreenThreads'
+      },
+      {
+        collection: 'spaces',
+        where: [['arrayOfUserIdsInSpace', 'array-contains', localStorage.getItem('uuid')]],
+        storeAs: 'usersSpaces'
       }
     ];
   })

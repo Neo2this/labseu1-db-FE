@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
-import { firebaseConnect, isLoaded } from 'react-redux-firebase';
+import { firebaseConnect, isLoaded, firestoreConnect } from 'react-redux-firebase';
 import NavBar from './NavBar';
 import styled from 'styled-components';
 
