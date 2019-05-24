@@ -181,7 +181,7 @@ class UserManagement extends Component {
                           this.setState({ alert: 'email' });
                         } else {
                           this.addUserEmailsToOrgDatabase();
-                          this.props.history.push('/homescreen');
+                          this.props.history.push('/app');
                         }
                       }}>
                       Invite
@@ -191,7 +191,7 @@ class UserManagement extends Component {
                         className="cancel-button"
                         onClick={e => {
                           e.preventDefault();
-                          this.props.history.push('/homescreen');
+                          this.props.history.push('/app');
                         }}>
                         Go back
                       </StyledModalButton>
@@ -239,7 +239,7 @@ class UserManagement extends Component {
               className="cancel-button"
               onClick={e => {
                 e.preventDefault();
-                this.props.history.push('/homescreen');
+                this.props.history.push('/app');
               }}>
               Go back
             </StyledModalButton>

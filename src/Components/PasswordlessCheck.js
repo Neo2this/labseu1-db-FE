@@ -7,9 +7,7 @@ import { StyledH1 } from './styled-components/StyledText';
 
 class PasswordlessCheck extends Component {
   componentDidMount() {
-    if (
-      this.props.firebase.auth().isSignInWithEmailLink(window.location.href)
-    ) {
+    if (this.props.firebase.auth().isSignInWithEmailLink(window.location.href)) {
       let email = window.localStorage.getItem('emailForSignIn');
       if (!email) {
         email = window.prompt('Please provide your email for confirmation');
@@ -26,7 +24,7 @@ class PasswordlessCheck extends Component {
 
   componentWillUpdate() {
     if (!isEmpty(this.props.auth)) {
-      this.props.history.push('/homescreen');
+      this.props.history.push('/app');
     }
   }
 

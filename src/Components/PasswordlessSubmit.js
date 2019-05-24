@@ -14,11 +14,7 @@ import {
   StyledLoginCon,
   StyledLowerSignInPasswordless
 } from './styled-components/StyledLogin';
-import {
-  StyledH1,
-  StyledLink,
-  StyledPLabel
-} from './styled-components/StyledText';
+import { StyledH1, StyledLink, StyledPLabel } from './styled-components/StyledText';
 import Spinner from './semantic-components/Spinner';
 import LoginAnimation from './animations/LoginAnimation';
 
@@ -38,7 +34,7 @@ class PasswordlessSubmit extends Component {
 
   componentWillUpdate() {
     if (!isEmpty(this.props.auth)) {
-      this.props.history.push('/homescreen');
+      this.props.history.push('/app');
     }
   }
 
@@ -92,16 +88,15 @@ class PasswordlessSubmit extends Component {
           <StyledForm
             onSubmit={event => {
               this.passwordlessSignIn(this.state.loginEmail, event);
-            }}
-          >
+            }}>
             <StyledLabel>
               <StyledPLabel>Email Address</StyledPLabel>
               <StyledInput
                 value={this.state.loginEmail}
-                name='loginEmail'
-                type='email'
+                name="loginEmail"
+                type="email"
                 onChange={this.handleInputChange}
-                placeholder='tonystark@example.com'
+                placeholder="tonystark@example.com"
               />
             </StyledLabel>
             <StyledLowerSignInPasswordless>
@@ -109,19 +104,18 @@ class PasswordlessSubmit extends Component {
                 disabled={isInvalid}
                 onClick={event => {
                   this.passwordlessSignIn(this.state.loginEmail, event);
-                }}
-              >
+                }}>
                 Send Email &#62;
               </StyledSendEmailButton>
             </StyledLowerSignInPasswordless>
           </StyledForm>
           {this.state.error && (
-            <Message warning attached='bottom'>
-              <Icon name='warning' />
+            <Message warning attached="bottom">
+              <Icon name="warning" />
               {this.state.error.message}
             </Message>
           )}
-          <StyledLink to='/login'>Back to Log In with Password</StyledLink>
+          <StyledLink to="/login">Back to Log In with Password</StyledLink>
         </StyledLoginCon>
         <LoginAnimation />
       </StyledLogin>

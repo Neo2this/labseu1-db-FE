@@ -63,7 +63,7 @@ export default class CreateCompanyModal extends Component {
                   onClick={e => {
                     e.preventDefault();
                     this.props.showModal(null);
-                    this.props.props.history.push('/homescreen');
+                    this.props.props.history.push('/app');
                   }}>
                   Cancel
                 </StyledModalButton>

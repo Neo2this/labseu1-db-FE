@@ -42,7 +42,7 @@ class ForgotPassword extends Component {
       .then(() => {
         if (this.props.resetPasswordStatus) {
           this.props.resetPasswordDone();
-          this.props.history.push('/homescreen');
+          this.props.history.push('/app');
         } else {
           this.props.history.push('/login');
         }
@@ -58,7 +58,7 @@ class ForgotPassword extends Component {
 
   componentWillUpdate() {
     if (!isEmpty(this.props.auth) && !this.props.resetPasswordStatus) {
-      this.props.history.push('/homescreen');
+      this.props.history.push('/app');
     }
   }
 
@@ -107,7 +107,7 @@ class ForgotPassword extends Component {
           {this.props.resetPasswordStatus && (
             <StyledSendEmailButton
               onClick={() => {
-                this.props.history.push('/homescreen');
+                this.props.history.push('/app');
                 this.props.resetPasswordDone();
               }}>
               Cancel

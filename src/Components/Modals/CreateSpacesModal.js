@@ -90,7 +90,7 @@ export default class CreateSpacesModal extends Component {
                     this.props.clearState(),
                     this.props.addOrganisationToDatabase(orgId)
                   ]).then(values => {
-                    this.props.props.history.push('/homescreen');
+                    this.props.props.history.push('/app');
                   });
                 }}>
                 Finish

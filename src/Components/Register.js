@@ -217,7 +217,7 @@ class Register extends Component {
       return <Spinner />;
     }
     if (!isEmpty(this.props.auth)) {
-      return <Redirect to="/homescreen" />;
+      return <Redirect to="/app" />;
     }
     return (
       <StyledLogin>

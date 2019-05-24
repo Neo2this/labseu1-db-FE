@@ -20,7 +20,7 @@ class App extends Component {
       <div>
         <Route exact path="/register" render={props => <Register {...props} />} />
         <Route exact path="/login" render={props => <Login {...props} />} />
-        <Route exact path="/homescreen" render={props => <FakeHome {...props} />} />
+        <Route exact path="/app" render={props => <FakeHome {...props} />} />
         <Route exact path="/passwordlesssubmit" render={props => <PasswordlessSubmit {...props} />} />
         <Route exact path="/passwordlesscheck" render={props => <PasswordlessCheck {...props} />} />
         <Route
